@@ -40,8 +40,8 @@ def test_write_wavfile():
 	Check if the file was written to the correct directory
 	'''
 	data_arr = np.arange(1, 1000, 0.1)
-	write_wavfile(eventname, int(fs), data_arr)
-	assert os.path.isfile(eventname) == True
+	write_wavfile('audio/'+eventname, int(fs), data_arr)
+	assert os.path.isfile('audio/'+eventname) == True
 	
 # Test 3
 def test_reqshift():

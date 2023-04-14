@@ -23,9 +23,9 @@ html :
 
 .PHONY : clean
 clean :
-	rm -f figures/*
-	rm -f audio/*
-	rm -f _build/*
+	rm -rf figures/*
+	rm -rf audio/*
+	rm -rf _build/*
 
 ## help : include documentation
 

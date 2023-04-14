@@ -7,61 +7,23 @@ from scipy.interpolate import interp1d
 from ligotools import readligo as rl
 from ligotools.utils import *
 
-
 # data for testing the whiten function:
-
 fn_H1 = 'data/H-H1_LOSC_4_V2-1126259446-32.hdf5'
 fn_L1 = 'data/L-L1_LOSC_4_V2-1126259446-32.hdf5'
-
-# Read the event properties from a local json file
 fnjson = "data/BBH_events_v3.json"
 events = json.load(open(fnjson,"r"))
 eventname = 'GW150914'
 event = events[eventname]
 fs = event['fs']
-
-try:
-    events = json.load(open(fnjson,"r"))
-except IOError:
-    print("Cannot find resource file "+fnjson)
-    print("You can download it from https://www.gwosc.org/s/events/"+fnjson)
-    print("Quitting.")
-    quit()
-
-
-try:
-    # read in data from H1 and L1, if available:
-    strain_H1, time_H1, chan_dict_H1 = rl.loaddata(fn_H1, 'H1')
-    strain_L1, time_L1, chan_dict_L1 = rl.loaddata(fn_L1, 'L1')
-except:
-    print("Cannot find data files!")
-    print("You can download them from https://www.gwosc.org/s/events/"+eventname)
-    print("Quitting.")
-    quit()
-
-# number of sample for the fast fourier transform:
+strain_H1, time_H1, chan_dict_H1 = rl.loaddata(fn_H1, 'H1')
+strain_L1, time_L1, chan_dict_L1 = rl.loaddata(fn_L1, 'L1')
 NFFT = 4*fs
 Pxx_H1, freqs = mlab.psd(strain_H1, Fs = fs, NFFT = NFFT)
 Pxx_L1, freqs = mlab.psd(strain_L1, Fs = fs, NFFT = NFFT)
-
-# We will use interpolations of the ASDs computed above for whitening:
 psd_H1 = interp1d(freqs, Pxx_H1)
 psd_L1 = interp1d(freqs, Pxx_L1)
-
-# both H1 and L1 will have the same time vector, so:
 time = time_H1
-# the time sample interval (uniformly sampled!)
 dt = time[1] - time[0]
-
-# data for testing write_wavfile:
-
-# fband = event['fband'] 
-# strain_H1_whiten = whiten(strain_H1,psd_H1,dt)
-# strain_L1_whiten = whiten(strain_L1,psd_L1,dt)
-# bb, ab = butter(4, [fband[0]*2./fs, fband[1]*2./fs], btype='band')
-# normalization = np.sqrt((fband[1]-fband[0])/(fs/2))
-# strain_H1_whitenbp = filtfilt(bb, ab, strain_H1_whiten) / normalization
-# strain_L1_whitenbp = filtfilt(bb, ab, strain_L1_whiten) / normalization
 
 # TEST 1
 def test_whiten():
@@ -71,7 +33,7 @@ def test_whiten():
 	output = whiten(strain_H1,psd_H1,dt)
 	assert len(strain_H1) == len(output), "length of the output array does not match the original one"
 	assert type(output) == np.ndarray
-	
+
 # Test 2
 def test_write_wavfile():
 	'''
@@ -91,6 +53,32 @@ def test_reqshift():
 	assert type(output) == np.ndarray
 	assert len(output) == len(data_arr)
 
-# Test 4
-#def test_plot_results():
 	
+# data for testing the plot_results function:
+time = np.linspace(-1, 1, 4096)
+timemax = 100
+SNR = np.abs(np.random.randn(4096))
+pcolor = 'g'
+det = 'H1'
+plottype = 'png'
+strain_H1_whitenbp = np.random.randn(4096)
+strain_L1_whitenbp = np.random.randn(4096)
+template_match = np.random.randn(4096)
+tevent = 0.0
+template_fft = np.fft.rfft(template_match)
+datafreq = np.fft.rfftfreq(len(strain_H1_whitenbp), d=1.0/4096)
+d_eff = 1.0
+freqs = datafreq
+data_psd = np.abs(np.random.randn(len(datafreq)))**2
+fs = 4096
+strain_whitenbp = np.random.randn(4096)
+
+# Test 4
+def test_plot_results():
+	'''Check whether the saved file is empty: 
+	if the file size is greater than 0, the plot png is saved successfully.
+	'''
+	plot_results(time, timemax, SNR, pcolor, det, eventname, plottype, tevent, strain_whitenbp, template_match, template_fft, datafreq, d_eff, freqs, data_psd, fs)
+	file_path = 'figures/'+eventname+"_"+det+"_SNR."+plottype
+	file_size = os.path.getsize(file_path)
+	assert file_size > 0

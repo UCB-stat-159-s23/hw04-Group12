@@ -4,8 +4,6 @@ Installable package: Florence Thin
 
 Add tests to `readligo.py`: Sarah Song
 
-Add tests to `readligo.py`: Sarah Song
-
 Create `utils.py`: Michelle Lin
 
 Make new plotting utility in `utils.py`: Michelle Lin

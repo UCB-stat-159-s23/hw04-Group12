@@ -9,7 +9,7 @@ env :
 	conda env create -f environment.yml 
 	conda activate notebook
 	conda install ipykernel
-	python -m ipykernel install --user --name make-env --display-name "IPython - Make"
+	python -m ipykernel install --user --name make-env --display-name "IPython - Ligo"
 
 
 ## html : build the JupyterBook normally

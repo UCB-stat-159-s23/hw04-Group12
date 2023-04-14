@@ -1,5 +1,4 @@
-# hw04-Group12 LOSC_Event_tutorial
-hw04-group12 created by GitHub Classroom
+# Group12 LOSC_Event_tutorial
 
 This is Group 12's attempt at running the LOSC_Event_tutorial and creating a Jupyter Book.
 

@@ -83,6 +83,9 @@ def test_write_wavfile():
 	
 # Test 3
 def test_reqshift():
+	''' 
+	Check the length of the output array and if it has a correct type
+	'''
 	data_arr = np.arange(1, 1000, 0.1)
 	output = reqshift(data_arr, 100, 4096)
 	assert type(output) == np.ndarray
